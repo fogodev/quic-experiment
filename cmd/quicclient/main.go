@@ -1,11 +1,17 @@
 package main
 
 import (
+	"context"
+	"crypto/tls"
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"quic-experiment/internal"
 	"time"
+
+	"github.com/lucas-clemente/quic-go"
 )
 
 func main() {
@@ -33,18 +39,25 @@ func main() {
 }
 
 func sendData(size internal.FileSize, ip net.IP, port int) time.Duration {
+	tlsConf := &tls.Config{
+		InsecureSkipVerify: true,
+		NextProtos:         []string{"quic-experiment"},
+	}
+
 	payload, hash := internal.GenerateFileBytes(size)
 	startTime := time.Now()
 
-	connection, err := net.DialTCP("tcp", nil, &net.TCPAddr{
-		IP:   ip,
-		Port: port,
-	})
+	session, err := quic.DialAddr(fmt.Sprintf("%v:%v", ip, port), tlsConf, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+	stream, err := session.OpenStreamSync(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	defer func() {
-		if err := connection.Close(); err != nil {
+		if err := stream.Close(); err != nil {
 			log.Fatal(err)
 		}
 	}()
@@ -53,7 +66,7 @@ func sendData(size internal.FileSize, ip net.IP, port int) time.Duration {
 	messageLen := uint64(len(message))
 	currentBytesCount := uint64(0)
 	for currentBytesCount != messageLen {
-		n, err := connection.Write(message[currentBytesCount:])
+		n, err := stream.Write(message[currentBytesCount:])
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -63,7 +76,7 @@ func sendData(size internal.FileSize, ip net.IP, port int) time.Duration {
 	responseLenBuffer := make([]byte, 8)
 	currentBytesCount = 0
 	for currentBytesCount != 8 {
-		n, err := connection.Read(responseLenBuffer[currentBytesCount:])
+		n, err := stream.Read(responseLenBuffer[currentBytesCount:])
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -74,8 +87,8 @@ func sendData(size internal.FileSize, ip net.IP, port int) time.Duration {
 	response := make([]byte, responseLen)
 	currentBytesCount = 0
 	for currentBytesCount != responseLen {
-		n, err := connection.Read(response[currentBytesCount:])
-		if err != nil {
+		n, err := stream.Read(response[currentBytesCount:])
+		if err != nil && !errors.Is(err, io.EOF) {
 			log.Fatal(err)
 		}
 		currentBytesCount += uint64(n)
@@ -88,4 +101,5 @@ func sendData(size internal.FileSize, ip net.IP, port int) time.Duration {
 	log.Printf("\nReceived hash: %s\nExpected hash: %s\nMatched: %v", responseHash, hash, responseHash == hash)
 
 	return elapsedTime
+
 }
