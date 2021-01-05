@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net"
@@ -33,13 +34,15 @@ func main() {
 }
 
 func sendData(size internal.FileSize, ip net.IP, port int) time.Duration {
+	tlsConf := &tls.Config{
+		InsecureSkipVerify: true,
+		NextProtos:         []string{"quic-experiment"},
+	}
+
 	payload, hash := internal.GenerateFileBytes(size)
 	startTime := time.Now()
 
-	connection, err := net.DialTCP("tcp", nil, &net.TCPAddr{
-		IP:   ip,
-		Port: port,
-	})
+	connection, err := tls.Dial("tcp", fmt.Sprintf("%v:%v", ip, port), tlsConf)
 	if err != nil {
 		log.Fatal(err)
 	}
