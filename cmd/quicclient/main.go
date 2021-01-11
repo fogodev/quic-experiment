@@ -25,17 +25,7 @@ func main() {
 		allTimes[run] = elapsedTimes
 	}
 
-	fmt.Println("100KB,1MB,10MB,100MB,1GB")
-	for run := 0; run < 5; run++ {
-		fmt.Printf(
-			"%v,%v,%v,%v,%v\n",
-			allTimes[run][0],
-			allTimes[run][1],
-			allTimes[run][2],
-			allTimes[run][3],
-			allTimes[run][4],
-		)
-	}
+	internal.SaveStatistics("quic_results.csv", allTimes, fileSizes)
 }
 
 func sendData(size internal.FileSize, ip net.IP, port int) time.Duration {
