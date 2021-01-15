@@ -26,18 +26,18 @@ Quanto a rede Wifi, foram feitos experimentos em 3 cenários com sinais de recep
 
 Cenário com sinal excelente:
 
-![Tabela Cenário Excelente](https://github.com/fogodev/quic-experiment/results/tabela_excelente.png)
-![Gráfico Cenário Excelente](https://github.com/fogodev/quic-experiment/results/grafico_excelente.png)
+![Tabela Cenário Excelente](https://github.com/fogodev/quic-experiment/main/results/tabela_excelente.png)
+![Gráfico Cenário Excelente](https://github.com/fogodev/quic-experiment/main/results/grafico_excelente.png)
 
 Cenário com sinal razoável:
 
-![Tabela Cenário Razoável](https://github.com/fogodev/quic-experiment/results/tabela_razoavel.png)
-![Gráfico Cenário Razoável](https://github.com/fogodev/quic-experiment/results/grafico_razoavel.png)
+![Tabela Cenário Razoável](https://github.com/fogodev/quic-experiment/main/results/tabela_razoavel.png)
+![Gráfico Cenário Razoável](https://github.com/fogodev/quic-experiment/main/results/grafico_razoavel.png)
 
 Cenário com sinal fraco:
 
-![Tabela Cenário Fraco](https://github.com/fogodev/quic-experiment/results/tabela_fraco.png)
-![Gráfico Cenário Fraco](https://github.com/fogodev/quic-experiment/results/grafico_fraco.png)
+![Tabela Cenário Fraco](https://github.com/fogodev/quic-experiment/main/results/tabela_fraco.png)
+![Gráfico Cenário Fraco](https://github.com/fogodev/quic-experiment/main/results/grafico_fraco.png)
 
 Mesmo sem se utilizar nenhuma das características diferenciais do QUIC em relação ao TCP, é possível notar que a existência das mesmas não acarreta em nenhum custo extra de processamento. Tendo em vista que as médias de tempos de transmissão para cada arquivo sempre estão dentro dos desvios padrões para o outro protocolo nos cenários "Excelente" e "Razoável".
 
